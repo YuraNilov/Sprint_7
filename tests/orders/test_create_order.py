@@ -14,11 +14,10 @@ class TestCreateOrder:
     ])
     @allure.title("Создание заказа с разными параметрами цвета")
     def test_create_order_with_different_colors(self, order_methods: OrderMethods, order_data, description):
-        response, status_code = order_methods.create_order(order_data)
+        status_code = order_methods.create_order(order_data)[1]
         assert status_code == 201, f"status_code: {status_code} для {description}"
 
     @allure.title("Тело ответа содержит track")
     def test_create_order_returns_track(self, order_methods: OrderMethods):
-        response, status_code = order_methods.create_order(ORDER_DATA_BLACK)
-        assert (status_code == 201 and "track" in response), (
-            f"status_code: {status_code}, track: {response.get('track')}")
+        response = order_methods.create_order(ORDER_DATA_BLACK)[0]
+        assert "track" in response, f"track: {response.get('track')}"

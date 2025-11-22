@@ -20,12 +20,12 @@ def courier():
     courier_methods = CourierMethods()
     courier_data = courier_methods.generate_courier_data()
     
-    response, status_code = courier_methods.create_courier(courier_data)
+    courier_methods.create_courier(courier_data)
     
-    login_response, login_status = courier_methods.login_courier(
+    login_response = courier_methods.login_courier(
         courier_data["login"], courier_data["password"]
-    )
-    courier_id = login_response.get("id") if login_status == 200 else None
+    )[0]
+    courier_id = login_response.get("id") if login_response else None
     
     yield {
         "login": courier_data["login"],
@@ -45,7 +45,7 @@ def courier():
 def order_with_track(order_methods):
     """Фикстура создает заказ для тестов"""
     from data import ORDER_DATA_BLACK
-    response, status_code = order_methods.create_order(ORDER_DATA_BLACK)
+    response = order_methods.create_order(ORDER_DATA_BLACK)[0]
     
     track_number = response.get("track")
     order_id = response.get("id")

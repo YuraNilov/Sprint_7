@@ -8,19 +8,18 @@ class TestLoginCourier:
     @allure.title("Курьер может авторизоваться")
     def test_login_courier_success(self, courier):
         courier_methods = CourierMethods()
-        response, status_code = courier_methods.login_courier(
+        status_code = courier_methods.login_courier(
             courier["login"], courier["password"]
-        )
+        )[1]
         assert status_code == 200, f"status_code: {status_code}"
 
     @allure.title("Успешный запрос возвращает id")
     def test_login_returns_id(self, courier):
         courier_methods = CourierMethods()
-        response, status_code = courier_methods.login_courier(
+        response = courier_methods.login_courier(
             courier["login"], courier["password"]
-        )
-        assert (status_code == 200 and "id" in response), (
-            f"status_code: {status_code}, id: {response.get('id')}")
+        )[0]
+        assert "id" in response, f"id: {response.get('id')}"
 
     @pytest.mark.parametrize("login,password,expected_status", [
         ("", "password", 400),
@@ -30,5 +29,5 @@ class TestLoginCourier:
     ])
     @allure.title("Авторизация с ошибками")
     def test_login_with_errors_fails(self, courier_methods: CourierMethods, login, password, expected_status):
-        response, status_code = courier_methods.login_courier(login, password)
+        status_code = courier_methods.login_courier(login, password)[1]
         assert status_code == expected_status, f"status_code: {status_code}"
